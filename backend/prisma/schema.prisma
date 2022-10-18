@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Patient {
+  id           Int          @id @default(autoincrement())
+  name         String
+  phone_number String       @unique
+  date         DateTime
+  description  String
+  Extra_Info   Extra_Info[]
+  Payment      Payment[]
+}
+
+model Extra_Info_Col {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  Extra_Info Extra_Info[]
+}
+
+model Extra_Info {
+  id               Int            @id @default(autoincrement())
+  value            String
+  column           Extra_Info_Col @relation(fields: [extra_Info_ColId], references: [id], onDelete: Cascade)
+  patient          Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  extra_Info_ColId Int
+  patientId        Int
+
+  @@unique([extra_Info_ColId, patientId])
+}
+
+model Payment {
+  id     Int      @id @default(autoincrement())
+  date   DateTime @updatedAt()
+  amount Float
+
+  patientId Int
+  Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
