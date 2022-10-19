@@ -36,4 +36,20 @@ const getExtraColumns = async () => {
   return cols;
 };
 
+export async function mapColNameWithID(colName: string | string[]) {
+  const cols = await getExtraColumns();
+  if (typeof colName === 'string') colName = [colName];
+  return cols
+    .map((id) => cols.filter((e) => e.name == colName)[0])
+    .map((e) => (e ? e.id : null));
+}
+
+export async function mapColIdWithName(colId: number | number[]) {
+  const cols = await getExtraColumns();
+  if (typeof colId === 'number') colId = [colId];
+  return colId
+    .map((id) => cols.filter((e) => e.id == id)[0])
+    .map((e) => (e ? e.name : null));
+}
+
 export { deleteColumn, updateColumn, createColumn, getExtraColumns };
