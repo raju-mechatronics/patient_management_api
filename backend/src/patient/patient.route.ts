@@ -1,3 +1,5 @@
+import { Extra_Info } from './../../interfaces/prismaTypes';
+import { Prisma } from '@prisma/client';
 import express, { Request, Response } from 'express';
 import {
   createPatient,
@@ -16,25 +18,27 @@ patientRouter.get('/', async (req: Request, res: Response) => {
 
 patientRouter.post('/', async (req: Request, res: Response) => {
   const patientBody = req.body;
-  console.log(patientBody);
-  const patient = await createPatient(patientBody);
-  console.log(patient);
+  const PATIENT: Prisma.PatientCreateInput = {
+    name: patientBody.name,
+    date: patientBody.date || Date.now().toString(),
+    description: patientBody.description,
+    phone_number: patientBody.phone_number
+  };
+  const extra = patientBody.Extra_Info;
+  const patient = await createPatient(PATIENT, extra);
+
   res.json(patient);
 });
 
 patientRouter.get('/:patientId', async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.patientId);
-  console.log(id);
   const patient = await getPatient(id);
-  console.log(patient);
   res.json(patient);
 });
 
 patientRouter.delete('/:patientId', async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.patientId);
-  console.log(id);
   const patient = await deletePatient(id);
-  console.log(patient);
   res.json(patient);
 });
 
