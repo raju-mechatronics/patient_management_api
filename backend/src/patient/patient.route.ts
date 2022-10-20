@@ -11,8 +11,13 @@ import {
 
 const patientRouter = express.Router();
 
+//if pagination needed add query(page and perpage)
 patientRouter.get('/', async (req: Request, res: Response) => {
-  const patients = await getAllPatient();
+  const { page, perpage } = req.query;
+  const patients = await getAllPatient(
+    parseInt(page as string),
+    parseInt(perpage as string)
+  );
   res.json(patients);
 });
 
