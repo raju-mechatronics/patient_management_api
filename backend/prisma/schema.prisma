@@ -42,3 +42,20 @@ model Payment {
   patientId Int
   Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
+
+model Apointment_Type {
+  id         Int          @id @default(autoincrement())
+  name       String
+  Apointment Apointment[]
+}
+
+model Apointment {
+  id   Int             @id @default(autoincrement())
+  type Apointment_Type @relation(fields: [apointment_TypeId], references: [id])
+
+  apointment_TypeId Int
+  name              String
+  phone_number      String
+  description       String
+  appointment_at    DateTime
+}
