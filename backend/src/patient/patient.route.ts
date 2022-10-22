@@ -50,7 +50,7 @@ patientRouter.delete('/:patientId', async (req: Request, res: Response) => {
 patientRouter.patch('/:patientId', async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.patientId);
   const patientBody = req.body;
-  console.log(id);
+  console.log(patientBody);
   const patient = await updatePatient(id, patientBody);
   console.log(patient);
   res.json(patient);

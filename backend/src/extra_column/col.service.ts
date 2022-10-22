@@ -39,8 +39,9 @@ const getExtraColumns = async () => {
 export async function mapColNameWithID(colName: string | string[]) {
   const cols = await getExtraColumns();
   if (typeof colName === 'string') colName = [colName];
-  return cols
-    .map((id) => cols.filter((e) => e.name == colName)[0])
+  console.log(cols, colName);
+  return colName
+    .map((name) => cols.filter((e) => e.name == name)[0])
     .map((e) => (e ? e.id : null));
 }
 

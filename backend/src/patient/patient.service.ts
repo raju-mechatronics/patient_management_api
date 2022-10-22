@@ -23,8 +23,8 @@ const createPatient = async (
         };
       else return null;
     })
-    .filter((e) => e && !!e.value);
-
+    .filter((e) => e && e.value);
+  console.log(validatedExtraInfo);
   const createdPatient = await prisma.patient.create({
     data: {
       ...patient,
@@ -36,9 +36,7 @@ const createPatient = async (
       }
     }
   });
-  console.log(createdPatient);
-
-  return createdPatient;
+  return await getPatient(createdPatient.id);
 };
 
 const getAllPatient = async (page: number | null = null, perPage = 10) => {
@@ -101,6 +99,7 @@ const updatePatient = async (
   patientId: number,
   patient: Prisma.PatientUpdateInput
 ) => {
+  console.log(patient);
   const updatedPatient = await prisma.patient.update({
     data: patient,
     where: {
