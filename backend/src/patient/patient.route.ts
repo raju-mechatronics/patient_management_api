@@ -6,6 +6,7 @@ import {
   deletePatient,
   getAllPatient,
   getPatient,
+  putPatient,
   updatePatient
 } from './patient.service';
 
@@ -52,6 +53,21 @@ patientRouter.patch('/:patientId', async (req: Request, res: Response) => {
   const patientBody = req.body;
   console.log(patientBody);
   const patient = await updatePatient(id, patientBody);
+  console.log(patient);
+  res.json(patient);
+});
+
+patientRouter.put('/:patientId', async (req: Request, res: Response) => {
+  const id: number = parseInt(req.params.patientId);
+  const patientBody = req.body;
+  const PATIENT: Prisma.PatientCreateInput = {
+    name: patientBody.name,
+    date: patientBody.date || Date.now().toString(),
+    description: patientBody.description,
+    phone_number: patientBody.phone_number
+  };
+  const extra = patientBody.Extra_Info;
+  const patient = await putPatient(id, patientBody, extra);
   console.log(patient);
   res.json(patient);
 });

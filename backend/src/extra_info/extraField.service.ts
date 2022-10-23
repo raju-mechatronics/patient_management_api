@@ -1,3 +1,4 @@
+import { Extra_Info } from './../../interfaces/prismaTypes';
 import { PrismaClient, Prisma } from '@prisma/client';
 const prisma = new PrismaClient();
 

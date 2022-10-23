@@ -1,4 +1,4 @@
-import { Patient } from './../../interfaces/prismaTypes';
+import { Patient, Extra_Info } from './../../interfaces/prismaTypes';
 import { PrismaClient, Prisma, Extra_Info_Col } from '@prisma/client';
 import { getExtraColumns, mapColNameWithID } from '../extra_column/col.service';
 const prisma = new PrismaClient();
@@ -101,12 +101,57 @@ const updatePatient = async (
 ) => {
   console.log(patient);
   const updatedPatient = await prisma.patient.update({
-    data: patient,
+    data: {
+      ...patient
+    },
     where: {
       id: patientId
     }
   });
   return updatedPatient;
+};
+
+const putPatient = async (
+  patientId: number,
+  patient: Prisma.PatientCreateInput,
+  extra: { [p: string]: string } = {}
+) => {
+  await prisma.extra_Info.deleteMany({
+    where: {
+      patientId: patientId
+    }
+  });
+  //extra column name
+  const extraCols = Object.keys(extra);
+  //map extra column name to its id and validate that if the column exist
+  const validated = await mapColNameWithID(extraCols);
+  //now create a object of extra column field
+  const validatedExtraInfo = validated
+    .map((e, i) => {
+      if (e)
+        return {
+          extra_Info_ColId: e,
+          value: extra[extraCols[i]]
+        };
+      else return null;
+    })
+    .filter((e) => e && e.value);
+  console.log(validatedExtraInfo);
+  const createdPatient = await prisma.patient.update({
+    where: {
+      id: patientId
+    },
+    data: {
+      ...patient,
+      Extra_Info: {
+        create: validatedExtraInfo as {
+          extra_Info_ColId: number;
+          value: string;
+        }[]
+      }
+    }
+  });
+  return await getPatient(createdPatient.id);
 };
 
 const deletePatient = async (patientId: number) => {
@@ -148,5 +193,6 @@ export {
   getAllPatient,
   updatePatient,
   deletePatient,
-  getPatient
+  getPatient,
+  putPatient
 };
