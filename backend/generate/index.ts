@@ -43,7 +43,7 @@ export interface Appointment_Type {
 export interface Appointment {
   id: number;
   type: Appointment_Type;
-  appointment_Type_Name: string;
+  Type_Name: string;
   name: string;
   phone_number: string;
   description: string;

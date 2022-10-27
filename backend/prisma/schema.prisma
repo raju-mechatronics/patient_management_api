@@ -51,8 +51,8 @@ model Appointment_Type {
 
 model Appointment {
   id                    Int              @id @default(autoincrement())
-  type                  Appointment_Type @relation(fields: [appointment_Type_Name], references: [name])
-  appointment_Type_Name String
+  type                  Appointment_Type @relation(fields: [Type_Name], references: [name])
+  Type_Name             String
   name                  String
   phone_number          String
   description           String
