@@ -5,6 +5,8 @@ import { config } from '../config';
 import { patientRouter } from './patient/patient.route';
 import colRouter from './extra_column/col.route';
 import extraFieldRouter from './extra_info/extraField.route';
+import { appointmentRouter } from './appointment/appointment.route';
+import './appointment/appointment.service';
 
 const app = express();
 app.use(morgan('tiny'));
@@ -20,6 +22,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/patient', patientRouter);
 app.use('/col', colRouter);
 app.use('/extra', extraFieldRouter);
+app.use('/appointment', appointmentRouter);
 
 if (!config.isTestEnvironment) {
   app.listen(config.port);
