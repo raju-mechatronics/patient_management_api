@@ -1,4 +1,4 @@
-import { Patient, Extra_Info } from './../../interfaces/prismaTypes';
+import { Patient } from '../../generate';
 import { PrismaClient, Prisma, Extra_Info_Col } from '@prisma/client';
 import { getExtraColumns, mapColNameWithID } from '../extra_column/col.service';
 const prisma = new PrismaClient();

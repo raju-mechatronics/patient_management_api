@@ -1,5 +1,4 @@
-import { Extra_Info } from './../../interfaces/prismaTypes';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const fieldEntry = async (data: {
