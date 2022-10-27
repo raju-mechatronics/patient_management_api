@@ -1,4 +1,3 @@
-import { Extra_Info } from './../../interfaces/prismaTypes';
 import { Prisma } from '@prisma/client';
 import express, { Request, Response } from 'express';
 import {
