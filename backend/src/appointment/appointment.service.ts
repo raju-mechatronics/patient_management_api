@@ -1,4 +1,5 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 export enum appointmentType {
@@ -70,4 +71,34 @@ export async function updateAppointment(
     where: { id: id },
     data: appointment
   });
+}
+
+export async function getAppointmentByDate(
+  year: number,
+  month: number,
+  day = 0
+) {
+  console.log(
+    new Date(year, month, day).toString(),
+    new Date(year, month, day + 1).toString()
+  );
+  if (day === 0) {
+    return await prisma.appointment.findMany({
+      where: {
+        appointment_at: {
+          gt: new Date(year, month - 1),
+          lte: new Date(year, month)
+        }
+      }
+    });
+  } else {
+    console.log(new Date(year, month, day, 0, 0, 0, 1).toString());
+    return await prisma.appointment.findMany({
+      where: {
+        appointment_at: {
+          in: [new Date(year, month, day)]
+        }
+      }
+    });
+  }
 }

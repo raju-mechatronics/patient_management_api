@@ -1,6 +1,7 @@
 import { Patient } from '../../generate';
-import { PrismaClient, Prisma, Extra_Info_Col } from '@prisma/client';
+import { Extra_Info_Col, Prisma, PrismaClient } from '@prisma/client';
 import { getExtraColumns, mapColNameWithID } from '../extra_column/col.service';
+
 const prisma = new PrismaClient();
 
 //create a patient
@@ -39,8 +40,15 @@ const createPatient = async (
   return await getPatient(createdPatient.id);
 };
 
-const getAllPatient = async (page: number | null = null, perPage = 10) => {
+const getAllPatient = async (
+  page: number | null = null,
+  order: 'asc' | 'desc' = 'asc',
+  perPage: number | undefined = 10
+) => {
   const patients = await prisma.patient.findMany({
+    orderBy: {
+      created_at: order
+    },
     include: {
       Extra_Info: {
         select: {
@@ -62,10 +70,11 @@ const getAllPatient = async (page: number | null = null, perPage = 10) => {
     skip: page ? (page - 1) * perPage : 0
   });
   const allCols = await getExtraColumns();
-  console.log(patients);
-  return await Promise.all(
+  const pateints = await Promise.all(
     patients.map((e) => normalizeExtraInfo(e as Patient, allCols))
   );
+  const count = await prisma.patient.count();
+  return { pateints, count };
 };
 
 const getPatient = async (patient_id: number) => {
@@ -116,11 +125,12 @@ const putPatient = async (
   patient: Prisma.PatientCreateInput,
   extra: { [p: string]: string } = {}
 ) => {
-  await prisma.extra_Info.deleteMany({
+  const deleted = await prisma.extra_Info.deleteMany({
     where: {
       patientId: patientId
     }
   });
+  console.log(deleted);
   //extra column name
   const extraCols = Object.keys(extra);
   //map extra column name to its id and validate that if the column exist

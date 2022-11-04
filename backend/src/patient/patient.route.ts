@@ -13,10 +13,13 @@ const patientRouter = express.Router();
 
 //if pagination needed add query(page and perpage)
 patientRouter.get('/', async (req: Request, res: Response) => {
-  const { page, perpage } = req.query;
+  const { page, limit, sort } = req.query;
+  const perpage = limit ? parseInt(limit as string) : 10;
+  console.log(sort);
   const patients = await getAllPatient(
     parseInt(page as string),
-    parseInt(perpage as string)
+    sort as 'asc' | 'desc',
+    perpage
   );
   res.json(patients);
 });
@@ -25,7 +28,6 @@ patientRouter.post('/', async (req: Request, res: Response) => {
   const patientBody = req.body;
   const PATIENT: Prisma.PatientCreateInput = {
     name: patientBody.name,
-    date: patientBody.date || Date.now().toString(),
     description: patientBody.description,
     phone_number: patientBody.phone_number
   };
@@ -61,7 +63,6 @@ patientRouter.put('/:patientId', async (req: Request, res: Response) => {
   const patientBody = req.body;
   const PATIENT: Prisma.PatientCreateInput = {
     name: patientBody.name,
-    date: patientBody.date || Date.now().toString(),
     description: patientBody.description,
     phone_number: patientBody.phone_number
   };

@@ -10,8 +10,8 @@ datasource db {
 model Patient {
   id           Int          @id @default(autoincrement())
   name         String
-  phone_number String       @unique
-  date         DateTime
+  phone_number String
+  created_at   DateTime     @default(now())
   description  String
   Extra_Info   Extra_Info[]
   Payment      Payment[]
