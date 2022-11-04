@@ -70,11 +70,11 @@ const getAllPatient = async (
     skip: page ? (page - 1) * perPage : 0
   });
   const allCols = await getExtraColumns();
-  const pateints = await Promise.all(
+  const patientAll = await Promise.all(
     patients.map((e) => normalizeExtraInfo(e as Patient, allCols))
   );
   const count = await prisma.patient.count();
-  return { pateints, count };
+  return { patients: patientAll, count };
 };
 
 const getPatient = async (patient_id: number) => {
