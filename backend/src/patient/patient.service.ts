@@ -1,6 +1,10 @@
 import { Patient } from '../../generate';
 import { Extra_Info_Col, Prisma, PrismaClient } from '@prisma/client';
-import { getExtraColumns, mapColNameWithID } from '../extra_column/col.service';
+import {
+  createColumn,
+  getExtraColumns,
+  mapColNameWithID
+} from '../extra_column/col.service';
 
 const prisma = new PrismaClient();
 
@@ -15,17 +19,24 @@ const createPatient = async (
   //map extra column name to its id and validate that if the column exist
   const validated = await mapColNameWithID(extraCols);
   //now create a object of extra column field
-  const validatedExtraInfo = validated
-    .map((e, i) => {
-      if (e)
-        return {
-          extra_Info_ColId: e,
-          value: extra[extraCols[i]]
-        };
-      else return null;
-    })
-    .filter((e) => e && e.value);
-  console.log(validatedExtraInfo);
+  const validatedExtraInfo = (
+    await Promise.all(
+      validated.map(async (e, i) => {
+        if (e)
+          return {
+            extra_Info_ColId: e,
+            value: extra[extraCols[i]]
+          };
+        else {
+          const col = await createColumn(extraCols[i]);
+          return {
+            extra_Info_ColId: col.id,
+            value: extra[extraCols[i]]
+          };
+        }
+      })
+    )
+  ).filter((e) => e && e.value);
   const createdPatient = await prisma.patient.create({
     data: {
       ...patient,
@@ -136,16 +147,24 @@ const putPatient = async (
   //map extra column name to its id and validate that if the column exist
   const validated = await mapColNameWithID(extraCols);
   //now create a object of extra column field
-  const validatedExtraInfo = validated
-    .map((e, i) => {
-      if (e)
-        return {
-          extra_Info_ColId: e,
-          value: extra[extraCols[i]]
-        };
-      else return null;
-    })
-    .filter((e) => e && e.value);
+  const validatedExtraInfo = (
+    await Promise.all(
+      validated.map(async (e, i) => {
+        if (e)
+          return {
+            extra_Info_ColId: e,
+            value: extra[extraCols[i]]
+          };
+        else {
+          const col = await createColumn(extraCols[i]);
+          return {
+            extra_Info_ColId: col.id,
+            value: extra[extraCols[i]]
+          };
+        }
+      })
+    )
+  ).filter((e) => e && e.value);
   console.log(validatedExtraInfo);
   const createdPatient = await prisma.patient.update({
     where: {
@@ -198,11 +217,23 @@ async function normalizeExtraInfo(
   }
 }
 
+async function searchPatients(name: string) {
+  const patients = await prisma.patient.findMany({
+    where: {
+      name: {
+        contains: name
+      }
+    }
+  });
+  return patients;
+}
+
 export {
   createPatient,
   getAllPatient,
   updatePatient,
   deletePatient,
   getPatient,
-  putPatient
+  putPatient,
+  searchPatients
 };

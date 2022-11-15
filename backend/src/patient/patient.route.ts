@@ -6,6 +6,7 @@ import {
   getAllPatient,
   getPatient,
   putPatient,
+  searchPatients,
   updatePatient
 } from './patient.service';
 
@@ -70,6 +71,12 @@ patientRouter.put('/:patientId', async (req: Request, res: Response) => {
   const patient = await putPatient(id, patientBody, extra);
   console.log(patient);
   res.json(patient);
+});
+
+patientRouter.get('/search/:name', async (req: Request, res: Response) => {
+  const name = req.params.name;
+  const patients = await searchPatients(name);
+  res.json(patients);
 });
 
 export { patientRouter };
