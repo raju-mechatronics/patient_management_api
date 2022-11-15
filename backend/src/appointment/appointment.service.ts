@@ -78,10 +78,6 @@ export async function getAppointmentByDate(
   month: number,
   day = 0
 ) {
-  console.log(
-    new Date(year, month, day).toString(),
-    new Date(year, month, day + 1).toString()
-  );
   if (day === 0) {
     return await prisma.appointment.findMany({
       where: {
@@ -92,11 +88,11 @@ export async function getAppointmentByDate(
       }
     });
   } else {
-    console.log(new Date(year, month, day, 0, 0, 0, 1).toString());
     return await prisma.appointment.findMany({
       where: {
         appointment_at: {
-          in: [new Date(year, month, day)]
+          gte: new Date(year, month - 1, day, 0, 0, 0),
+          lt: new Date(year, month - 1, day, 23, 59, 59)
         }
       }
     });
