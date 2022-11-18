@@ -36,7 +36,7 @@ model Extra_Info {
 
 model Payment {
   id     Int      @id @default(autoincrement())
-  date   DateTime @updatedAt()
+  date   DateTime @default(now())
   amount Float
 
   patientId Int

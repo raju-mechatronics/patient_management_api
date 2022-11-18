@@ -5,6 +5,7 @@ import {
   getExtraColumns,
   mapColNameWithID
 } from '../extra_column/col.service';
+import { getTotalPayment } from '../payment/payment.service';
 
 const prisma = new PrismaClient();
 
@@ -111,11 +112,7 @@ const getAllPatient = async (
           value: true
         }
       },
-      Payment: {
-        select: {
-          amount: true
-        }
-      }
+      Payment: true
     },
     take: page ? perPage : 9999999999999,
     skip: page ? (page - 1) * perPage : 0
@@ -144,14 +141,12 @@ const getPatient = async (patient_id: number) => {
           value: true
         }
       },
-      Payment: {
-        select: {
-          amount: true
-        }
-      }
+      Payment: true
     }
   });
   const normalizedPatient = await normalizeExtraInfo(patient as Patient);
+  // @ts-ignore
+  normalizedPatient['total payment'] = await getTotalPayment(patient_id);
   return normalizedPatient;
 };
 

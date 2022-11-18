@@ -4,6 +4,8 @@ import {
   appointmentType,
   createAppointment
 } from './appointment/appointment.service';
+import { PrismaClient } from '@prisma/client';
+import { addpayment } from './payment/payment.service';
 
 async function populatePatient() {
   for (let i = 0; i < 10000; i++) {
@@ -55,5 +57,37 @@ async function populateAppointment() {
   }
 }
 
-populatePatient();
-populateAppointment();
+const populatePayment = async () => {
+  const prisma = new PrismaClient();
+  const patiens = await prisma.patient.findMany({
+    select: {
+      id: true
+    }
+  });
+  const patients = patiens.map((e) => e.id);
+  console.log(patients.length);
+  let promises = [];
+  for (let i = 0; i < 100000; i++) {
+    promises.push(
+      prisma.payment.create({
+        data: {
+          patientId: patients[Math.floor(Math.random() * patients.length)],
+          amount: Math.floor(Math.random() * 100),
+          date: faker.date.recent(365 * 2)
+        }
+      })
+    );
+    if (promises.length === 50) {
+      const e = await Promise.all(promises);
+      promises = [];
+    }
+  }
+};
+
+populatePatient()
+  .then(() => {
+    populateAppointment();
+  })
+  .then(() => {
+    populatePayment();
+  });
