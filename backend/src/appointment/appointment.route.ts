@@ -38,10 +38,10 @@ appointmentRouter.patch('/:id', async (req: Request, res: Response) => {
 });
 
 appointmentRouter.get(
-  '/:year/:month/:day?',
+  '/:year/:month?/:day?',
   async (req: Request, res: Response) => {
     const year = parseInt(req.params.year);
-    const month = parseInt(req.params.month);
+    const month = parseInt(req.params.month) || 0;
     const day = parseInt(req.params.day) || 0;
     console.log(day, year, month);
     const appointments = await getAppointmentByDate(year, month, day);

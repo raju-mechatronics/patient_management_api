@@ -51,6 +51,46 @@ const createPatient = async (
   return await getPatient(createdPatient.id);
 };
 
+const getPatientAt = async ({
+  year,
+  month,
+  day
+}: {
+  year: number;
+  month: number;
+  day: number;
+}) => {
+  if (month === 0) {
+    return await prisma.patient.findMany({
+      where: {
+        created_at: {
+          gt: new Date(year, 0, 0),
+          lt: new Date(year + 1, 0)
+        }
+      }
+    });
+  }
+  if (day === 0) {
+    return await prisma.patient.findMany({
+      where: {
+        created_at: {
+          gt: new Date(year, month - 1),
+          lte: new Date(year, month)
+        }
+      }
+    });
+  } else {
+    return await prisma.patient.findMany({
+      where: {
+        created_at: {
+          gte: new Date(year, month - 1, day, 0, 0, 0),
+          lt: new Date(year, month - 1, day, 23, 59, 59)
+        }
+      }
+    });
+  }
+};
+
 const getAllPatient = async (
   page: number | null = null,
   order: 'asc' | 'desc' = 'asc',
@@ -235,5 +275,6 @@ export {
   deletePatient,
   getPatient,
   putPatient,
-  searchPatients
+  searchPatients,
+  getPatientAt
 };

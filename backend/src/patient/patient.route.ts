@@ -79,4 +79,8 @@ patientRouter.get('/search/:name', async (req: Request, res: Response) => {
   res.json(patients);
 });
 
+patientRouter.get('/date', async (req: Request, res: Response) => {
+  const { year, month, day } = req.params;
+});
+
 export { patientRouter };

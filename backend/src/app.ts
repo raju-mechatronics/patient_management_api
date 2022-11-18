@@ -7,6 +7,7 @@ import colRouter from './extra_column/col.route';
 import extraFieldRouter from './extra_info/extraField.route';
 import { appointmentRouter } from './appointment/appointment.route';
 import './appointment/appointment.service';
+import reportRoute from "./reports/report.route";
 
 const app = express();
 app.use(morgan('tiny'));
@@ -23,6 +24,7 @@ app.use('/patient', patientRouter);
 app.use('/col', colRouter);
 app.use('/extra', extraFieldRouter);
 app.use('/appointment', appointmentRouter);
+app.use('/report', reportRoute);
 
 if (!config.isTestEnvironment) {
   app.listen(config.port);
